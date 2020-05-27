@@ -1,0 +1,82 @@
+﻿
+
+@model PagedList.IPagedList<ContosoUniversity.Models.Student>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Students";
+}
+
+<h2>Students</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+@using (Html.BeginForm("Index", "Student", FormMethod.Get))
+{
+    <p>
+        @*BAGIAN SEARCH*@
+
+        @*jadi gini (type = "text" name="firstname") nanti name nya di taruh di parameter
+            Controllers/StudentController bagian index *@
+
+        Last name: @Html.TextBox("searchString", ViewBag.CurrentFilter as string)
+        First name : @Html.TextBox("firstname", ViewBag.first as string)
+        @*Enrollment Date : @Html.TextBox("tanggal", ViewBag.date as string, new { @type = "date" })*@
+        Enrollment Date : <input type="date" name="tanggal" />
+
+        <input type="submit" value="Search" />
+    </p>
+}
+
+@*BAGIAN TABEL*@
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Enrollment Date", "Index", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstMidName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EnrollmentDate)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
+
+</table>
+<br />
+
+@*BAGIAN PAGINATION*@
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, firstnamefilter = ViewBag.first, tanggalfilter = ViewBag.date }))
+
+
+@* currentFilter = ViewBag.searchString, searchString = ViewBag.search, firstname = ViewBag.first*@ 
